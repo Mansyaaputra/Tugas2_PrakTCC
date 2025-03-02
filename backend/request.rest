@@ -1,0 +1,28 @@
+GET http://localhost:5000/notes
+
+
+###
+GET http://localhost:5000/notes/1
+
+###
+POST http://localhost:5000/notes
+Content-Type:application/json
+
+{
+    "Judul":"Mansya",
+    "Deskripsi": "mansya@gmail"
+  
+
+}
+
+###
+PATCH  http://localhost:5000/notes/1
+Content-Type:application/json
+
+{
+    "Judul":"Mansyaaaa",
+    "Deskripsi": "mansyghghgmail"
+}
+
+###
+DELETE http://localhost:5000/notes/1
