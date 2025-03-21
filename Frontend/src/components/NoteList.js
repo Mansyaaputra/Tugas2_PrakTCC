@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../NoteList.css";
+import { BASE_URL } from "../utils";
 
 const NoteList = () => {
   const [notes, setNotes] = useState([]);
@@ -17,7 +18,7 @@ const NoteList = () => {
 
   const getNotes = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/notes");
+      const response = await axios.get(`${BASE_URL}/notes`);
       setNotes(response.data);
     } catch (error) {
       console.error("Gagal mengambil catatan:", error);
@@ -26,7 +27,7 @@ const NoteList = () => {
 
   const deleteNote = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/notes/${id}`);
+      await axios.delete(`${BASE_URL}/notes/${id}`);
       getNotes();
     } catch (error) {
       console.error("Gagal menghapus catatan:", error);
@@ -50,7 +51,7 @@ const NoteList = () => {
   const saveNote = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/notes", {
+      await axios.post("/notes", {
         Judul: judul,
         Deskripsi: deskripsi,
       });
@@ -65,7 +66,7 @@ const NoteList = () => {
   const updateNote = async (e) => {
     e.preventDefault();
     try {
-      await axios.patch(`http://localhost:5000/notes/${selectedNote.id}`, {
+      await axios.patch(`${BASE_URL}/notes/${selectedNote.id}`, {
         Judul: judul,
         Deskripsi: deskripsi,
       });
