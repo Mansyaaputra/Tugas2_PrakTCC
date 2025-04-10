@@ -1,3 +1,2 @@
 runtime: nodejs20
 service: frontend-notes-mansya
-instance_class: F1
