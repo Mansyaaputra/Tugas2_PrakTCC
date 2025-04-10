@@ -23,7 +23,7 @@ steps:
       - -c
       - |
         npm run build
-    dir: "frontend"
+    dir: "Frontend"
     volumes:
       - name: "npm-cache"
         path: /root/.npm
