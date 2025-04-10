@@ -51,7 +51,7 @@ const NoteList = () => {
   const saveNote = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/notes", {
+      await axios.post(`${BASE_URL}/notes`, {
         Judul: judul,
         Deskripsi: deskripsi,
       });
