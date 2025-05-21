@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 5000;
 // ✅ Konfigurasi CORS
 const allowedOrigins = [
   "https://frontend-notes-mansya-dot-b-02-451105.uc.r.appspot.com",
+  "http://localhost:3000",
   
 ];
 
