@@ -1,82 +1,56 @@
+// components/LoginForm.js
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils";
-import "../NoteList.css"; // Import the shared auth CSS
 
-const Login = () => {
+const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
-    
+
     try {
-      const response = await axios.post(`${BASE_URL}/login`, {
-        username,
-        password,
-      });
+      const response = await axios.post(
+        `${BASE_URL}/login`,
+        { username, password },
+        { withCredentials: true }
+      );
 
       localStorage.setItem("accessToken", response.data.accessToken);
-      navigate("/");
-    } catch (error) {
-      setError(
-        error.response?.data?.message || "Login failed. Please check your credentials."
-      );
-    } finally {
-      setIsLoading(false);
+      navigate("/notes"); // ✅ Arahkan ke notes setelah login berhasil
+    } catch (err) {
+      alert(err.response?.data?.message || "Login gagal");
     }
   };
 
   return (
     <div className="auth-container">
-      <form onSubmit={handleSubmit} className="auth-form">
-        <h2 className="auth-title">Login to Notes</h2>
-
-        {error && <div className="error-message">{error}</div>}
-
+      <form onSubmit={handleLogin} className="auth-form">
+        <h2>Login</h2>
         <input
           type="text"
-          name="username"
-          placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
           required
-          autoComplete="username"
         />
-
         <input
           type="password"
-          name="password"
-          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
           required
-          autoComplete="current-password"
         />
-
-        <button
-          type="submit"
-          className="auth-button"
-          disabled={isLoading}
-        >
-          {isLoading ? "Logging in..." : "Login"}
-        </button>
-
-        <div className="auth-link">
-          Don't have an account?{" "}
-          <Link to="/register">
-            Register here
-          </Link>
-        </div>
+        <button type="submit">Login</button>
+        <p>
+          Belum punya akun? <Link to="/register">Daftar di sini</Link>
+        </p>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default LoginForm;
