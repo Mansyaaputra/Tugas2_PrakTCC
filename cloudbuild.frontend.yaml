@@ -30,9 +30,5 @@ steps:
     args: ["app", "deploy", "--quiet"]
     dir: "Frontend"
 
-volumes:
-  - name: "npm-cache"
-    path: /root/.npm
-
 options:
   logging: CLOUD_LOGGING_ONLY
