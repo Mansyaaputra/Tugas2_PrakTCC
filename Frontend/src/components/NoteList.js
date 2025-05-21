@@ -1,96 +1,89 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "../NoteList.css";
+import "../ListNote.css"; // Import the new layout CSS file
 import { BASE_URL } from "../utils";
 
-const NoteList = () => {
+const ListNote = () => {
   const [notes, setNotes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [judul, setJudul] = useState("");
+  const [deskripsi, setDeskripsi] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("Component mounted");
     getNotes();
   }, []);
 
   const getNotes = async () => {
     try {
-      const token = localStorage.getItem("accessToken");
+      const token = localStorage.getItem("accessToken"); // ambil token dari localStorage
+      if (!token) {
+        console.warn("No access token found, please login.");
+        return;
+      }
       const response = await axios.get(`${BASE_URL}/notes`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        withCredentials: true,
       });
       setNotes(response.data);
     } catch (error) {
       console.error("Gagal mengambil catatan:", error);
-      alert(
-        error.response?.data?.message ||
-        error.response?.data?.msg ||
-        `Gagal mengambil catatan! Status: ${error.response?.status}`
-      );
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        localStorage.removeItem("accessToken");
-        navigate("/login");
-      }
     }
   };
 
   const deleteNote = async (id) => {
     try {
       const token = localStorage.getItem("accessToken");
-      await axios.delete(`${BASE_URL}/delete-notes/${id}`, {
+      await axios.delete(`${BASE_URL}/notes/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      getNotes();
+      setNotes(notes.filter((note) => note.id !== id));
+      if (selectedNote && selectedNote.id === id) {
+        setSelectedNote(null);
+      }
     } catch (error) {
-      console.error("Gagal menghapus catatan:", error);
+      console.error("Error deleting note:", error);
     }
   };
 
   const openModal = (note = null) => {
     setSelectedNote(note);
-    setTitle(note ? note.title : "");
-    setDescription(note ? note.description : "");
+    setJudul(note ? note.Judul : "");
+    setDeskripsi(note ? note.Deskripsi : "");
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedNote(null);
-    setTitle("");
-    setDescription("");
+    setJudul("");
+    setDeskripsi("");
   };
 
   const saveNote = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("accessToken");
-      await axios.post(
-        `${BASE_URL}/create-notes`,
-        { title, description },
-        {
+       const token = localStorage.getItem("accessToken");
+      await axios.post(`${BASE_URL}/notes`, {
+        Judul: judul,
+        Deskripsi: deskripsi,
+      },
+       {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          withCredentials: true, // tambahkan ini agar cookie (refreshToken) dikirim
         }
-      );
+    );
       closeModal();
       getNotes();
+      navigate("/");
     } catch (error) {
-      // Tampilkan pesan error lebih jelas ke user
-      alert(
-        error.response?.data?.message ||
-        error.response?.data?.msg ||
-        "Gagal menyimpan catatan!"
-      );
       console.log("Gagal menyimpan catatan:", error);
     }
   };
@@ -98,18 +91,20 @@ const NoteList = () => {
   const updateNote = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("accessToken");
-      await axios.put(
-        `${BASE_URL}/update-notes/${selectedNote.id}`,
-        { title, description },
-        {
+       const token = localStorage.getItem("accessToken");
+      await axios.patch(`${BASE_URL}/notes/${selectedNote.id}`, {
+        Judul: judul,
+        Deskripsi: deskripsi,
+      },
+       {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
-      );
+    );
       closeModal();
       getNotes();
+      navigate("/");
     } catch (error) {
       console.log("Gagal memperbarui catatan:", error);
     }
@@ -117,25 +112,11 @@ const NoteList = () => {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem("accessToken");
-
-      await axios.post(
-        `${BASE_URL}/logout`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
-        }
-      );
-
-      localStorage.removeItem("accessToken");
+      await axios.post(`${BASE_URL}/logout`);
       navigate("/login");
     } catch (error) {
-      console.error("Logout gagal:", error);
-      localStorage.removeItem("accessToken");
-      navigate("/login");
+      console.error("Gagal logout:", error);
+      navigate("/login"); // Tetap arahkan ke login jika gagal
     }
   };
 
@@ -143,27 +124,30 @@ const NoteList = () => {
     <div className="container">
       <div className="header">
         <h2 className="title">Daftar Catatan</h2>
-        <div>
-          <button className="btn-add" onClick={() => openModal()}>
-            + Tambah Catatan
-          </button>
-          <button className="btn-logout" onClick={handleLogout} style={{ marginLeft: "10px" }}>
-            Logout
-          </button>
-        </div>
+        <button className="btn-logout" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
-
+      <div className="header">
+        <h5 className="total-notes">Total Catatan: {notes.length}</h5>
+        <button className="btn-add" onClick={() => openModal()}>
+          + Tambah Catatan
+        </button>
+      </div>
       <div className="note-list">
         {notes.length > 0 ? (
           notes.map((note) => (
             <div key={note.id} className="note-card">
-              <h3 className="note-title">{note.title}</h3>
-              <p className="note-description">{note.description}</p>
+              <h3 className="note-title">{note.Judul}</h3>
+              <p className="note-description">{note.Deskripsi}</p>
               <div className="note-actions">
                 <button onClick={() => openModal(note)} className="btn-edit">
                   Edit
                 </button>
-                <button onClick={() => deleteNote(note.id)} className="btn-delete">
+                <button
+                  onClick={() => deleteNote(note.id)}
+                  className="btn-delete"
+                >
                   Hapus
                 </button>
               </div>
@@ -174,6 +158,7 @@ const NoteList = () => {
         )}
       </div>
 
+      {/* MODAL FORM */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
@@ -181,24 +166,28 @@ const NoteList = () => {
             <form onSubmit={selectedNote ? updateNote : saveNote}>
               <input
                 type="text"
-                name="title"
+                name="Judul"
                 placeholder="Judul"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                value={judul}
+                onChange={(e) => setJudul(e.target.value)}
                 required
               />
               <textarea
-                name="description"
+                name="Deskripsi"
                 placeholder="Deskripsi"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={deskripsi}
+                onChange={(e) => setDeskripsi(e.target.value)}
                 required
               ></textarea>
               <div className="modal-actions">
                 <button type="submit" className="btn-save">
                   Simpan
                 </button>
-                <button type="button" className="btn-close" onClick={closeModal}>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={closeModal}
+                >
                   Batal
                 </button>
               </div>
@@ -210,4 +199,4 @@ const NoteList = () => {
   );
 };
 
-export default NoteList;
+export default ListNote;
