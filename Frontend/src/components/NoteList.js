@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "../ListNote.css"; // Import the new layout CSS file
+import "../NoteList.css"; // Import the new layout CSS file
 import { BASE_URL } from "../utils";
 
 const ListNote = () => {

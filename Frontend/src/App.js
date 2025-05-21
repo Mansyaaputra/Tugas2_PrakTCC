@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import ListNote from "./components/ListNote";
-import Login from "./components/Login";
+import ListNote from "./components/NoteList";
+import Login from "./components/login";
 import Register from "./components/Register";
 
 function App() {
