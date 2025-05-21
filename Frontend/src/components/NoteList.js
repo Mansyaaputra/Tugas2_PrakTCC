@@ -74,11 +74,18 @@ const NoteList = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          withCredentials: true, // tambahkan ini agar cookie (refreshToken) dikirim
         }
       );
       closeModal();
       getNotes();
     } catch (error) {
+      // Tampilkan pesan error lebih jelas ke user
+      alert(
+        error.response?.data?.message ||
+        error.response?.data?.msg ||
+        "Gagal menyimpan catatan!"
+      );
       console.log("Gagal menyimpan catatan:", error);
     }
   };
