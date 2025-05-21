@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 5000;
 // ✅ Konfigurasi CORS
 const allowedOrigins = [
   "http://localhost:3000",
+  "https://notes-backend-mansya-1031435520100.us-central1.run.app",
 ];
 
 app.use(
