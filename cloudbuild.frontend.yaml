@@ -37,3 +37,11 @@ steps:
 options:
   logging: CLOUD_LOGGING_ONLY
   
+  steps:
+  - name: 'gcr.io/cloud-builders/npm'
+    dir: 'frontend'  # ganti jika direktori kamu berbeda
+    args: ['install', '--legacy-peer-deps']
+
+  - name: 'gcr.io/cloud-builders/npm'
+    dir: 'frontend'
+    args: ['run', 'build']
