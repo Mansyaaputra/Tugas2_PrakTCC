@@ -1,16 +1,20 @@
 import { Sequelize } from "sequelize";
 import db from "../config/database.js";
 
-// Membuat tabel "user"
 const Note = db.define(
-  "note", // Nama Tabel
+  "notes",{ 
+    title: {type: Sequelize.STRING,},
+    description: {type: Sequelize.STRING,},
+  },
   {
-    Judul: Sequelize.STRING,
-    Deskripsi: Sequelize.STRING,
-   
+    freezeTableName: true,
+    createdAt: "tanggal_dibuat",
+    updatedAt: "tanggal_diperbarui",
   }
 );
 
-db.sync().then(() => console.log("Database synced"));
-
 export default Note;
+
+(async () => {
+  await db.sync();
+})();

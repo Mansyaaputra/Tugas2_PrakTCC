@@ -8,8 +8,8 @@ const NoteList = () => {
   const [notes, setNotes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
-  const [judul, setJudul] = useState("");
-  const [deskripsi, setDeskripsi] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,16 +18,31 @@ const NoteList = () => {
 
   const getNotes = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/notes`);
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(`${BASE_URL}/notes`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
       setNotes(response.data);
     } catch (error) {
       console.error("Gagal mengambil catatan:", error);
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        localStorage.removeItem("accessToken");
+        navigate("/login");
+      }
     }
   };
 
   const deleteNote = async (id) => {
     try {
-      await axios.delete(`${BASE_URL}/notes/${id}`);
+      const token = localStorage.getItem("accessToken");
+      await axios.delete(`${BASE_URL}/delete-notes/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       getNotes();
     } catch (error) {
       console.error("Gagal menghapus catatan:", error);
@@ -36,28 +51,33 @@ const NoteList = () => {
 
   const openModal = (note = null) => {
     setSelectedNote(note);
-    setJudul(note ? note.Judul : "");
-    setDeskripsi(note ? note.Deskripsi : "");
+    setTitle(note ? note.title : "");
+    setDescription(note ? note.description : "");
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedNote(null);
-    setJudul("");
-    setDeskripsi("");
+    setTitle("");
+    setDescription("");
   };
 
   const saveNote = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${BASE_URL}/notes`, {
-        Judul: judul,
-        Deskripsi: deskripsi,
-      });
+      const token = localStorage.getItem("accessToken");
+      await axios.post(
+        `${BASE_URL}/create-notes`,
+        { title, description },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       closeModal();
       getNotes();
-      navigate("/");
     } catch (error) {
       console.log("Gagal menyimpan catatan:", error);
     }
@@ -66,34 +86,74 @@ const NoteList = () => {
   const updateNote = async (e) => {
     e.preventDefault();
     try {
-      await axios.patch(`${BASE_URL}/notes/${selectedNote.id}`, {
-        Judul: judul,
-        Deskripsi: deskripsi,
-      });
+      const token = localStorage.getItem("accessToken");
+      await axios.put(
+        `${BASE_URL}/update-notes/${selectedNote.id}`,
+        { title, description },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       closeModal();
       getNotes();
-      navigate("/");
     } catch (error) {
       console.log("Gagal memperbarui catatan:", error);
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      await axios.post(
+        `${BASE_URL}/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+
+      localStorage.removeItem("accessToken");
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout gagal:", error);
+      localStorage.removeItem("accessToken");
+      navigate("/login");
+    }
+  };
+
   return (
     <div className="container">
-      <h2 className="title">Daftar Catatan</h2>
       <div className="header">
-        <h5 className="total-notes">Total Catatan: {notes.length}</h5>
-        <button className="btn-add" onClick={() => openModal()}>+ Tambah Catatan</button>
+        <h2 className="title">Daftar Catatan</h2>
+        <div>
+          <button className="btn-add" onClick={() => openModal()}>
+            + Tambah Catatan
+          </button>
+          <button className="btn-logout" onClick={handleLogout} style={{ marginLeft: "10px" }}>
+            Logout
+          </button>
+        </div>
       </div>
+
       <div className="note-list">
         {notes.length > 0 ? (
           notes.map((note) => (
             <div key={note.id} className="note-card">
-              <h3 className="note-title">{note.Judul}</h3>
-              <p className="note-description">{note.Deskripsi}</p>
+              <h3 className="note-title">{note.title}</h3>
+              <p className="note-description">{note.description}</p>
               <div className="note-actions">
-                <button onClick={() => openModal(note)} className="btn-edit">Edit</button>
-                <button onClick={() => deleteNote(note.id)} className="btn-delete">Hapus</button>
+                <button onClick={() => openModal(note)} className="btn-edit">
+                  Edit
+                </button>
+                <button onClick={() => deleteNote(note.id)} className="btn-delete">
+                  Hapus
+                </button>
               </div>
             </div>
           ))
@@ -102,7 +162,6 @@ const NoteList = () => {
         )}
       </div>
 
-      {/* MODAL FORM */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
@@ -110,22 +169,26 @@ const NoteList = () => {
             <form onSubmit={selectedNote ? updateNote : saveNote}>
               <input
                 type="text"
-                name="Judul"
+                name="title"
                 placeholder="Judul"
-                value={judul}
-                onChange={(e) => setJudul(e.target.value)}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 required
               />
               <textarea
-                name="Deskripsi"
+                name="description"
                 placeholder="Deskripsi"
-                value={deskripsi}
-                onChange={(e) => setDeskripsi(e.target.value)}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 required
               ></textarea>
               <div className="modal-actions">
-                <button type="submit" className="btn-save">Simpan</button>
-                <button type="button" className="btn-close" onClick={closeModal}>Batal</button>
+                <button type="submit" className="btn-save">
+                  Simpan
+                </button>
+                <button type="button" className="btn-close" onClick={closeModal}>
+                  Batal
+                </button>
               </div>
             </form>
           </div>
