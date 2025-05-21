@@ -1,27 +1,28 @@
-// App.js
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import NoteList from "./components/NoteList";
-import LoginForm from "./components/login";
-import RegisterForm from "./components/Register";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import ListNote from "./components/ListNote";
+import Login from "./components/Login";
+import Register from "./components/Register";
 
 function App() {
-  const isAuthenticated = !!localStorage.getItem("accessToken");
+  // Fungsi ProtectedRoute
+  const ProtectedRoute = ({ children }) => {
+    const token = localStorage.getItem("accessToken");
+    return token ? children : <Navigate to="/login" />;
+  };
 
   return (
     <BrowserRouter>
       <Routes>
         <Route
           path="/"
-          element={<Navigate to="/login" replace />} // Halaman utama diarahkan ke login
-        />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/register" element={<RegisterForm />} />
-        <Route
-          path="/notes"
           element={
-            isAuthenticated ? <NoteList /> : <Navigate to="/login" replace />
+            <ProtectedRoute>
+              <ListNote />
+            </ProtectedRoute>
           }
         />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   );
