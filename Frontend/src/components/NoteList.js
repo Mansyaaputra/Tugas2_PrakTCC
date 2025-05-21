@@ -28,6 +28,11 @@ const NoteList = () => {
       setNotes(response.data);
     } catch (error) {
       console.error("Gagal mengambil catatan:", error);
+      alert(
+        error.response?.data?.message ||
+        error.response?.data?.msg ||
+        `Gagal mengambil catatan! Status: ${error.response?.status}`
+      );
       if (error.response?.status === 401 || error.response?.status === 403) {
         localStorage.removeItem("accessToken");
         navigate("/login");
