@@ -16,7 +16,7 @@ const Register = () => {
     try {
       await axios.post(
         `${BASE_URL}/create-users`,
-        { email, username, password },
+        { username, password,email },
         { withCredentials: true }
       );
       alert("Registrasi berhasil. Silakan login.");

@@ -18,13 +18,13 @@ Content-Type: application/json
 ###
 
 ### ➕ Create User (Register)
-POST http://localhost:5000/register
+POST https://notes-backend-mansya-1031435520100.us-central1.run.app/create-users
 Content-Type: application/json
 
 {
   "username": "2",
   "password": "2",
-  "email": "hafizh@example.com",
+  "email": "hafizh@example.com"
 }
 
 ###
