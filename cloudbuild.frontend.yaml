@@ -1,16 +1,12 @@
 steps:
-  # Step 1: Install dependencies
+  # Step 1: Install dependencies with legacy-peer-deps
   - name: "gcr.io/cloud-builders/npm"
     entrypoint: bash
     args:
       - -c
       - |
-        if [ ! -d "node_modules" ]; then
-          echo "Installing dependencies..."
-          npm ci
-        else
-          echo "Skipping npm install, node_modules exists."
-        fi
+        echo "Installing dependencies with legacy-peer-deps..."
+        npm install --legacy-peer-deps
     dir: "Frontend"
     volumes:
       - name: "npm-cache"
@@ -34,14 +30,9 @@ steps:
     args: ["app", "deploy", "--quiet"]
     dir: "Frontend"
 
+volumes:
+  - name: "npm-cache"
+    path: /root/.npm
+
 options:
   logging: CLOUD_LOGGING_ONLY
-  
-  steps:
-  - name: 'gcr.io/cloud-builders/npm'
-    dir: 'frontend'  # ganti jika direktori kamu berbeda
-    args: ['install', '--legacy-peer-deps']
-
-  - name: 'gcr.io/cloud-builders/npm'
-    dir: 'frontend'
-    args: ['run', 'build']
