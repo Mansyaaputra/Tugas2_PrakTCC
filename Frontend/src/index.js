@@ -1,16 +1,10 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot } from "react-dom/client";
 import App from './App';
 
-// Pastikan elemen root ditemukan
-const container = document.getElementById('root');
-if (!container) {
-  throw new Error("Root container not found. Periksa apakah ada <div id='root'> di index.html");
-}
-
-const root = createRoot(container);
+const root = createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
-);
+);     
