@@ -1,2 +1,11 @@
 runtime: nodejs20
 service: frontend-notes-mansya
+runtime: nodejs18
+
+handlers:
+  - url: /
+    static_files: index.html
+    upload: index.html
+  - url: /(.*)
+    static_files: \1
+    upload: .*

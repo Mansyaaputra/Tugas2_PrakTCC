@@ -8,9 +8,6 @@ steps:
         echo "Installing dependencies with legacy-peer-deps..."
         npm install --legacy-peer-deps
     dir: "Frontend"
-    volumes:
-      - name: "npm-cache"
-        path: /root/.npm
 
   # Step 2: Build frontend
   - name: "gcr.io/cloud-builders/npm"
@@ -20,15 +17,12 @@ steps:
       - |
         npm run build
     dir: "Frontend"
-    volumes:
-      - name: "npm-cache"
-        path: /root/.npm
 
-  # Step 3: Deploy ke App Engine
+  # Step 3: Deploy hasil build ke App Engine
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
     args: ["app", "deploy", "--quiet"]
-    dir: "Frontend"
+    dir: "Frontend/build"
 
 options:
   logging: CLOUD_LOGGING_ONLY
