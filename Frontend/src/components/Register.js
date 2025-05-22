@@ -16,14 +16,16 @@ const Register = () => {
     try {
       await axios.post(
         `${BASE_URL}/create-users`,
-        { email,username, password},
+        { email, username, password },
         { withCredentials: true }
       );
       alert("Registrasi berhasil. Silakan login.");
       navigate("/login");
     } catch (err) {
       const errorMsg =
-        err?.response?.data?.message || "Registrasi gagal. Silakan coba lagi.";
+        err?.response?.data?.msg || // tambahkan ini agar pesan backend muncul
+        err?.response?.data?.message ||
+        "Registrasi gagal. Silakan coba lagi.";
       console.error("Register Error:", err);
       alert(errorMsg);
     }
