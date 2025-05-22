@@ -1,5 +1,4 @@
-
-  steps:
+steps:
   # Ngambil data env yg disimpen di cloud storage pake gsuri
   - name: "gcr.io/cloud-builders/gsutil"
     args: ["cp", "${_ENV}", "backend/.env"]
@@ -48,4 +47,7 @@
         "--allow-unauthenticated",
       ]
 
-
+# Log hanya akan disimpan di Google Cloud Logging
+# Log tidak akan disimpan di Google Cloud Storage (butuh hak akses).
+options:
+  logging: CLOUD_LOGGING_ONLY
