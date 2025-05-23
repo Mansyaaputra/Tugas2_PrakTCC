@@ -1,8 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import NoteRoute from "./route/NoteRoute.js";
-import UserRoute from "./route/UserRoute.js";
+import ApiRoute from "./route/ApiRoute.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -29,8 +28,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 // ✅ Routing langsung di root
-app.use(NoteRoute);
-app.use(UserRoute);
+app.use(ApiRoute);
 
 // ✅ Health Check
 app.get("/health", (req, res) => {
