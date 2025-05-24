@@ -27,11 +27,11 @@ router.put("/update-notes/:id", verifyToken, updateNote);
 router.delete("/delete-notes/:id", verifyToken, deleteNote);
 
 // User routes
-router.get("/users", getUsers);
-router.get("/users/:id", getUserById);
+router.get("/users", verifyToken, getUsers);
+router.get("/users/:id", verifyToken, getUserById);
 router.post("/create-users", createUser);
-router.put("/update-users/:id", updateUser);
-router.delete("/delete-users/:id", deleteUser);
+router.put("/update-users/:id", verifyToken, updateUser);
+router.delete("/delete-users/:id", verifyToken, deleteUser);
 router.post("/login", loginHandler);
 router.post("/logout", verifyToken, logout);
 
