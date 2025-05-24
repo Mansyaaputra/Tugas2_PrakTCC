@@ -35,6 +35,12 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Server is running" });
 });
 
+// ✅ Global error handler (tambahkan di bawah semua route)
+app.use((err, req, res, next) => {
+  console.error("Global error handler:", err);
+  res.status(500).json({ message: "Internal server error" });
+});
+
 // ✅ Start Server
 app.listen(PORT, () =>
   console.log(`🚀 Server berjalan di http://localhost:${PORT}`)
