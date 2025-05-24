@@ -2,7 +2,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import NoteList from "./components/NoteList";
 import LoginForm from "./components/login";
-import RegisterForm from "./components/Register";
+import RegisterForm from "/components/Register";
 
 function App() {
   const isAuthenticated = !!localStorage.getItem("accessToken");

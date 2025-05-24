@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { BASE_URL } from "../utils";
+import { BASE_URL } from "../context/utils";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../NoteList.css";
-import { BASE_URL } from "../utils";
+import { BASE_URL } from "../context/utils";
 
 const NoteList = () => {
   const [notes, setNotes] = useState([]);
